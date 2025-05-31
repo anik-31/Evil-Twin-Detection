@@ -1,0 +1,41 @@
+#include <WiFi.h>
+
+// Constants
+const int baudRate = 115200;
+const int scanInterval = 5000; // Time between scans in milliseconds
+
+void setup() {
+  Serial.begin(baudRate);
+  delay(1000);
+
+  // Initialize Wi-Fi in station mode
+  WiFi.mode(WIFI_STA);
+  WiFi.disconnect(); // Ensure no pre-existing connections
+  Serial.println("Wi-Fi scanner initialized.");
+}
+
+void loop() {
+  Serial.println("Starting Wi-Fi scan...");
+
+  // Perform Wi-Fi network scan
+  int numberOfNetworks = WiFi.scanNetworks();
+  Serial.println("Scan complete.");
+  
+  // Print number of networks found
+  Serial.printf("Number of networks found: %d\n", numberOfNetworks);
+
+  // Loop through each network and print details
+  for (int i = 0; i < numberOfNetworks; ++i) {
+    Serial.printf(
+      "%d,SSID:%s,BSSID:%s,RSSI:%d,Channel:%d,Encryption:%d\n",
+      i + 1,
+      WiFi.SSID(i).c_str(),
+      WiFi.BSSIDstr(i).c_str(),
+      WiFi.RSSI(i),
+      WiFi.channel(i),
+      WiFi.encryptionType(i)
+    );
+  }
+
+  delay(scanInterval); // Wait before the next scan
+}
